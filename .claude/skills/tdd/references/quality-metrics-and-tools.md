@@ -10,7 +10,7 @@
 | `radon` | 순환복잡도 재검증, 주석/코드 비율(raw 지표) 측정 | `pip install radon` |
 | `pylint` | 중복 코드 탐지(symilar 기반 `duplicate-code`), 명명 규칙 검사 | `pip install pylint` |
 | `coverage` | Branch 커버리지 측정, 테스트 성공률 확인 | `pip install coverage` |
-| `unittest` (표준 라이브러리) | 테스트 실행 및 Red/Green 확인 | Python 3.14 표준 라이브러리 |
+| `unittest` (표준 라이브러리) | 테스트 실행 및 Red/Green 확인 | Python 3.12 표준 라이브러리 |
 
 ## 1. 함수 순수코드라인 ≤ 50 / 순환복잡도 ≤ 10
 

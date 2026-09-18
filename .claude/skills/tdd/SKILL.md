@@ -5,13 +5,13 @@ description: Red-Green-Refactor 기반 TDD 방법론(obra/superpowers의 test-dr
 
 # TDD 구현 스킬
 
-> 이 스킬은 [obra/superpowers](https://github.com/obra/superpowers)의 `test-driven-development` 스킬(MIT License)을 Python 3.14 / `unittest` 환경과 `CLAUDE.md` 구현 지침에 맞게 각색한 것이다. 원본의 Iron Law·Red-Green-Refactor·Rationalizations·Red Flags 구조를 유지하고, 이 프로젝트 고유의 품질 게이트(순수코드라인/순환복잡도/중복코드/Doxygen 주석비율/명명규칙)와 테스트 문서화 규칙(기법·긍정/부정 케이스)을 추가로 결합했다.
+> 이 스킬은 [obra/superpowers](https://github.com/obra/superpowers)의 `test-driven-development` 스킬(MIT License)을 Python 3.12 / `unittest` 환경과 `CLAUDE.md` 구현 지침에 맞게 각색한 것이다. 원본의 Iron Law·Red-Green-Refactor·Rationalizations·Red Flags 구조를 유지하고, 이 프로젝트 고유의 품질 게이트(순수코드라인/순환복잡도/중복코드/Doxygen 주석비율/명명규칙)와 테스트 문서화 규칙(기법·긍정/부정 케이스)을 추가로 결합했다.
 
 ## 0. 입력 확인 (최우선)
 
 - 구현 대상의 상세설계 산출물(`detailed-design` 스킬 결과: 함수 계약 — 함수 ID, 시그니처, 사전/사후조건, 오류 계약, 할당 요구사항 ID)을 실제로 확인한다(`Glob`/`Grep`/`Read`). 없으면 추측해서 구현하지 않고 사용자에게 알린다.
 - `Skill` 도구로 `test-design-techniques` 스킬을 함께 로드한다. 테스트 설계 기법(동등분할/경계값분석/결정테이블/상태전이/오류추정 등)의 명칭과 정의는 그 스킬의 공통 카탈로그를 따르며, 이 스킬에서 재정의하지 않는다.
-- Python 3.14 문법을 기준으로, 테스트는 표준 라이브러리 `unittest`만 사용한다.
+- Python 3.12 문법을 기준으로, 테스트는 표준 라이브러리 `unittest`만 사용한다.
 
 ## 핵심 원칙 (Iron Law)
 
