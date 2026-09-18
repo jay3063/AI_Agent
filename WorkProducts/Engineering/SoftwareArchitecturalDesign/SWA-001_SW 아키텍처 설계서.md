@@ -7,11 +7,11 @@
 | 문서 ID / 명칭 | SWA-001 / SW 아키텍처 설계서 — 전자식 차일드락 제어 SW |
 | 적용 템플릿 | TPL-SWE2-001_SW 아키텍처 설계서 템플릿.docx (섹션 1~15 구조를 그대로 따름), 다이어그램 표기는 TPL-SWE2-002(drawio) 규칙을 Mermaid로 표현 |
 | 적용 프로세스 | A-SPICE 4.1 SWE.2 |
-| 버전 / 베이스라인 | Rev 0.1 / BL-OEM-1.0 (OEM 입력 베이스라인 불변) |
+| 버전 / 베이스라인 | Rev 0.2 / BL-OEM-1.0 (OEM 입력 베이스라인 불변) |
 | 작성자 | 아키텍처설계 에이전트 |
 | 검토 요청 대상 | jay.kim3063@gmail.com |
 | 승인자 | 대기 — 가상 OEM-A 역할을 겸임하는 사용자(jay.kim3063@gmail.com) |
-| 작성 상태 | 4~16절(TPL-SWE2-001 전체 목차) 최초 작성 완료(Draft), 검토 대기 |
+| 작성 상태 | 4~16절(TPL-SWE2-001 전체 목차) 최초 작성 완료(Draft), 검토 대기. Rev 0.2에서 명명 규칙(camelCase) 전역 적용 및 §5/§6/§7 내부 불일치 정정 반영(개정 이력 참조) |
 
 **교육용 시나리오 고지**: 본 문서는 SW 품질교육을 위한 가상 OEM-A 입력(`OEM_Sample/OEM-SWR-001_OEM SW 요구사항 사양서.docx`, Rev 1.0, BL-OEM-1.0) 기반 교육용 산출물이며, 실제 제작사의 사양을 나타내지 않는다. 본 문서와 이를 생성한 방법론(`architecture-design` 스킬)은 실무 보조 도구이며 Automotive SPICE(A-SPICE) PAM 및 ISO 26262 Part 6 원문 표준을 대체하지 않는다. ASIL B 등급은 OEM 입력을 그대로 승계했으며 HARA/ASIL 도출 타당성은 본 문서 범위 밖이다(ISO 26262 Part 3 제외).
 
@@ -19,7 +19,8 @@
 
 | Rev | 일자 | 작성자 | 변경 내용 |
 |---|---|---|---|
-| 0.1 | 2026-09-18 | 아키텍처설계 에이전트 | 최초 작성. 아키텍처 후보 A(계층형)/B(헥사고날)/C(하이브리드) 제시 후 사용자 결정으로 **후보 C(계층형 외피 + 헥사고날 코어) 확정**(§15.1 ADR). 이에 따라 4~16절 전체 상세 설계 작성. 사용자 결정 반영 사항: (1) 동시성 모델 단일 스레드 순차 처리 확정, (2) `gear`={P,N,D,R}, `vehicle_speed_kph`=0.0~300.0 데이터 계약 확정, (3) DEGRADED 표시우선순위는 Phase 4 확장 지점으로 명시적 이월. |
+| 0.1 | 2026-09-18 | 아키텍처설계 에이전트 | 최초 작성. 아키텍처 후보 A(계층형)/B(헥사고날)/C(하이브리드) 제시 후 사용자 결정으로 **후보 C(계층형 외피 + 헥사고날 코어) 확정**(§15.1 ADR). 이에 따라 4~16절 전체 상세 설계 작성. 사용자 결정 반영 사항: (1) 동시성 모델 단일 스레드 순차 처리 확정, (2) `gear`={P,N,D,R}, `vehicleSpeedKph`=0.0~300.0 데이터 계약 확정, (3) DEGRADED 표시우선순위는 Phase 4 확장 지점으로 명시적 이월. |
+| 0.2 | 2026-09-18 | 상세설계 에이전트(Phase1 상세설계 중 발견·정정, 사용자 승인) | **정정 1(명명 규칙 전역 적용)**: 사용자 결정("CLAUDE.md의 낙타표기법을 공개 인터페이스에도 예외 없이 전역 적용, snake_case 예외를 두지 않음")에 따라 §4/§5/§6.1/§6.2/§7/§13의 모든 공개 함수명·매개변수명·DTO 필드명을 camelCase로 변경했다(예: `submit_vehicle_signal`→`submitVehicleSignal`, `submit_driver_command`→`submitDriverCommand`, `run_cycle`→`runCycle`, `query_status`→`queryStatus`, `query_display`→`queryDisplay`, `get_recent`→`getRecent`, `freshness_status`→`freshnessStatus`, `lock_left/right`→`lockLeft/lockRight`, `control_state`→`controlState`, `reason_code`→`reasonCode`, `input_validity`→`inputValidity`, `priority_reason`→`priorityReason`, `vehicle_speed_kph`→`vehicleSpeedKph`, `crash_status`→`crashStatus`, `rear_left/right_approach_risk`→`rearLeftApproachRisk`/`rearRightApproachRisk`, `fire_detected`→`fireDetected`, `overtemperature_detected`→`overtemperatureDetected`, `adult_present`→`adultPresent`, `isofix_left/right`→`isofixLeft/isofixRight`, `ignition_on`→`ignitionOn`, `sensor_fault`→`sensorFault`, `override_left/right/active`→`overrideLeft/overrideRight/overrideActive`, `approach_risk_active`→`approachRiskActive`, `unlock_requested_now`→`unlockRequestedNow`, `group_id`→`groupId`, `display_priority`→`displayPriority`, `sequence_id`→`sequenceId`, `rejection_reason`→`rejectionReason`, `get_recent(n)`의 매개변수 `n`→`recordCount`(3자 미만 명명 위반도 함께 해소)). **제외 범위(명시)**: (a) Mermaid 다이어그램의 노드 식별자(예: `ADP_WEB`, `CORE_TOP`)는 소스코드 식별자가 아닌 도식 렌더링용 라벨이므로 대상에서 제외했다. (b) OEM 원시 열거값 리터럴(`physical_button`, `mobile_app` 등 문자열 상수값 자체)은 식별자가 아니라 OEM-IF-004 데이터 계약상의 고정 문자열 값이므로 변경하지 않았다(값을 바꾸면 OEM 인터페이스 계약이 깨짐). (c) 파일/문서 경로명(`OEM_Sample/...`, 템플릿 경로)은 식별자가 아니므로 제외했다. **정정 2(§5/§6/§7 내부 불일치 해소)**: SWE.3 상세설계(`SWD-001` §3.4)에서 §6.1 IF-INT-012 공식 시그니처(`decide(snapshot, commands, lastConfirmed)`—`lastConfirmed`가 매개변수)와 §5.1(정적 의존 그래프의 "ENG --> STM"), §5.2(결합도 판정표의 "SWC-ENG-01 → SWC-STM-01" 행), §7.1(UC-001 시퀀스도의 "ENG->>STM: get()")이 서로 다른 호출 경로를 그리고 있음을 발견했다는 보고를 받아 정정한다. §6.1 공식 인터페이스 표를 규범으로 채택해, **Orchestrator가 `SWC-STM-01.get()`을 호출해 `lastConfirmed` 값을 획득한 뒤 `decide()`에 매개변수로 전달하며, `PriorityDecisionEngine`은 `StateManager`에 대한 의존을 전혀 갖지 않는다**로 §4.1(SWC-ENG-01 DIP 판정), §5.1(의존 그래프에서 `ENG --> STM` 제거, `ORC --> STM` 추가), §5.2(`SWC-ENG-01 → SWC-STM-01` 행 삭제, `SWC-ORC-01 → SWC-STM-01` 행에 `get()`의 이중 용도 명시), §6.1(IF-INT-011 사용자 칸을 `SWC-ENG-01, SWC-QRY-01`에서 `SWC-ORC-01, SWC-QRY-01`로 정정), §7.1(시퀀스에서 `ORC->>STM: get()`을 `decide()` 호출 앞으로 이동, `ENG->>STM: get()` 라인 삭제)을 정정했다. 이 정정은 인터페이스 시그니처 자체를 바꾸지 않으며(§6.1 IF-INT-012는 이미 `lastConfirmed`를 매개변수로 명시하고 있었음), 결합도를 오히려 낮추는 방향(Engine의 StateManager 의존 제거)이므로 §2.2/§2.6 원칙과 상충하지 않는다. |
 
 ---
 
@@ -110,12 +111,12 @@ SWR-022의 8단계 정책은 Phase1(순위8)→Phase2(순위1,3,4)→Phase3(순�
 | SWC-VAL-01 | SafetyInputValidator | Core-중위 | B | Vehicle측 안전관련 입력(OEM-IF-001/002/003/007/008/009)의 freshness(SWR-013-A)·형식/범위(SWR-013-B) 검증·정규화 |
 | SWC-VAL-02 | DriverCommandValidator | Core-중위 | QM | 운전자 명령(OEM-IF-004) 필드 유효성 검증·거절(SWR-019, SWR-013-B의 IF-004 부분 포함) |
 | SWC-OVR-01 | ApproachRiskOverrideTracker | Core-중위 | B | 접근위험 억제 시작시각 기록 및 10초 이내 재입력 override 판정(SWR-006), 좌/우 독립(SWR-009) |
-| SWC-ENG-01 | PriorityDecisionEngine | Core-중위 | B | SWR-022 8단계 우선순위에 따라 좌·우 도어 출력·제어상태·reason_code를 결정(무상태 순수 판정) |
+| SWC-ENG-01 | PriorityDecisionEngine | Core-중위 | B | SWR-022 8단계 우선순위에 따라 좌·우 도어 출력·제어상태·reasonCode를 결정(무상태 순수 판정) |
 | SWC-QRY-01 | StatusQueryService | Core-중위 | QM | 상태조회 응답 구성(SWR-014) |
-| SWC-DSP-01 | DisplaySerializer | Core-중위 | QM | 표시 인터페이스(OEM-IF-006) 직렬화, priority_reason=reason_code 매핑, 직렬화 오류계약(SWR-015) |
-| SWC-STM-01 | StateManager | Core-하위 | B | 직전 확정 lock_left/lock_right 및 제어상태(control_state) 보관·제공(SWR-021의 "직전 확정 출력" 근거) |
+| SWC-DSP-01 | DisplaySerializer | Core-중위 | QM | 표시 인터페이스(OEM-IF-006) 직렬화, priorityReason=reasonCode 매핑, 직렬화 오류계약(SWR-015) |
+| SWC-STM-01 | StateManager | Core-하위 | B | 직전 확정 lockLeft/lockRight 및 제어상태(controlState) 보관·제공(SWR-021의 "직전 확정 출력" 근거) |
 | SWC-REC-01 | DecisionRecordStore | Core-하위 | QM | 결정 레코드 FIFO 100건 메모리 보관(SWR-010/011/012) |
-| SWC-DEF-01 | ReasonCodeCatalog | Core-하위(공용 정의) | — | reason_code/경고코드 불변 상수 정의(런타임 상태 없음, 값으로 참조되는 정적 데이터) |
+| SWC-DEF-01 | ReasonCodeCatalog | Core-하위(공용 정의) | — | reasonCode/경고코드 불변 상수 정의(런타임 상태 없음, 값으로 참조되는 정적 데이터) |
 | SWC-ADP-VEH | VehicleSignalAdapter | 외피(어댑터) | — | Vehicle측 신호원(OEM-IF-001/002/003/007/008/009)을 `SubmitVehicleSignal` 포트로 변환 |
 | SWC-ADP-CMD | DriverCommandAdapter | 외피(어댑터) | — | 운전자 명령(OEM-IF-004)을 `SubmitDriverCommand` 포트로 변환 |
 | SWC-ADP-ACT | ActuatorOutputAdapter | 외피(어댑터) | — | 코어의 `ActuatorOutputPort` 요구를 실제(또는 PC/SIL 가상) 액추에이터 경계(OEM-IF-005)로 적용 |
@@ -185,15 +186,15 @@ flowchart TB
 | 요소 ID | 책임(단일 문장) | 입력 | 출력 | 상태 | 오류 처리 | 할당 요구사항 | 응집도 판정 |
 |---|---|---|---|---|---|---|---|
 | SWC-ORC-01 | 매 평가주기의 실행 순서(검증→판정→커밋→출력→기록)를 결정론적으로 고정한다. | tick 신호(RunEvaluationCycle 호출) | 완료된 1회 평가주기(부수효과: StateManager 커밋, ActuatorOutputPort 적용, DecisionRecordStore 기록) | 무상태(호출 간 자체 데이터 보관 없음) | 하위 컴포넌트 예외를 포착해 해당 주기를 "미확정"으로 남기지 않고 안전 상태(§9) 경로로 위임 | SWR-004, SWR-016, SWR-022(호출 순서) | 기능적(단일 책임: 순서 보증) |
-| SWC-VAL-01 | Vehicle측 안전입력의 freshness와 형식/범위를 검증해 정규화된 DTO를 만든다. | 최근 Submit된 raw Vehicle 신호(그룹별 source_timestamp_s 포함) | `ValidatedVehicleSnapshot`(필드별 validity, freshness_status) | 각 신호 그룹의 마지막 수신값·타임스탬프 보관 | 형식/범위 위반 필드는 INVALID로 표시(판정에서 배제), freshness 위반은 DEGRADED 플래그 | SWR-013-A, SWR-013-B(IF-004 제외) | 기능적 |
-| SWC-VAL-02 | 운전자 명령 필드(side/action/source)의 완전성·enum 유효성을 검증해 거절/수락을 결정한다. | raw 운전자 명령 | `ValidatedDriverCommand`(accepted, rejection_reason) | 무상태 | 누락/형식/미등록 enum 시 거절 + 오류기록 | SWR-019, SWR-013-B(IF-004 부분) | 기능적 |
-| SWC-OVR-01 | 접근위험 억제 시작시각을 추적하고 10초 이내 동일 도어 재입력 시 override 성립을 판정한다. | side, approach_risk_active, unlock_requested_now, now | OverrideDecision{override_active, since, reason_code} | side별 억제 시작 타임스탬프(최대 2개, 상한 고정) | 없음(입력은 이미 검증된 값만 수신) | SWR-006, SWR-009 | 기능적 |
-| SWC-ENG-01 | SWR-022 8단계 우선순위에 따라 좌·우 도어의 출력·제어상태·reason_code를 결정한다(무상태 순수 함수). | ValidatedVehicleSnapshot, ValidatedDriverCommand 목록, LastConfirmedOutput, OverrideDecision(좌/우) | DecisionResult{lock_left, lock_right, control_state, reason_code, override_left/right} | 무상태(순수 계산) | 입력 DTO 자체는 이미 검증되었으므로 이 컴포넌트는 추가 오류 처리를 하지 않음(설계상 오류 없음 보장은 상위 검증 컴포넌트의 책임) | SWR-001,002,003,004,005,006,007,008,009,017,018,020,021,022 | 기능적 |
-| SWC-STM-01 | 마지막으로 확정된 lock_left/lock_right와 제어상태(control_state)를 보관하고 조회를 제공한다. | Commit(DecisionResult) / Get() | LastConfirmedOutput | lock_left, lock_right, control_state (초기값: RELEASE/RELEASE/NORMAL — 시스템 기동 시 안전한 기본값. 초기값의 안전성 재확인은 §11.4 참조) | 없음(단순 저장) | SWR-021(직전 확정 출력 유지의 근거 데이터) | 기능적 |
-| SWC-REC-01 | 결정 레코드를 최근 100건까지 FIFO로 메모리에 보관한다. | Append(DecisionRecord) | GetRecent(n) | `deque(maxlen=100)`(상한 고정) | 없음(허용 필드 외 데이터는 스키마 자체에서 배제) | SWR-010, SWR-011, SWR-012 | 기능적 |
-| SWC-QRY-01 | 현재 lock_left/lock_right, state, input_validity, 최근 reason_code로 상태조회 응답을 구성한다. | StateManager.Get(), DecisionRecordStore.GetRecent(1), SafetyInputValidator의 freshness_status | StatusSnapshot | 무상태 | 없음(하위 컴포넌트 값을 그대로 조합) | SWR-014 | 기능적 |
-| SWC-DSP-01 | StatusSnapshot을 OEM-IF-006 형식(state, priority_reason, reason_code, input_validity)으로 직렬화한다. | StatusSnapshot | 직렬화된 표시 페이로드 또는 오류 | 무상태 | 직렬화 실패 시 오류 계약(HTTP 500, §6.2 IF-EXT-006) | SWR-015 | 기능적 |
-| SWC-DEF-01 | reason_code/경고코드의 불변 목록을 정의한다. | — | 상수 참조값 | 없음(불변) | 없음 | SWR-014, SWR-015, SWR-017, SWR-021 등 reason_code 참조 전반 | 기능적(단, "정의 카탈로그"로서 응집도 판정은 자료 성격상 참고용) |
+| SWC-VAL-01 | Vehicle측 안전입력의 freshness와 형식/범위를 검증해 정규화된 DTO를 만든다. | 최근 Submit된 raw Vehicle 신호(그룹별 sourceTimestampS 포함) | `ValidatedVehicleSnapshot`(필드별 validity, freshnessStatus) | 각 신호 그룹의 마지막 수신값·타임스탬프 보관 | 형식/범위 위반 필드는 INVALID로 표시(판정에서 배제), freshness 위반은 DEGRADED 플래그 | SWR-013-A, SWR-013-B(IF-004 제외) | 기능적 |
+| SWC-VAL-02 | 운전자 명령 필드(side/action/source)의 완전성·enum 유효성을 검증해 거절/수락을 결정한다. | raw 운전자 명령 | `ValidatedDriverCommand`(accepted, rejectionReason) | 무상태 | 누락/형식/미등록 enum 시 거절 + 오류기록 | SWR-019, SWR-013-B(IF-004 부분) | 기능적 |
+| SWC-OVR-01 | 접근위험 억제 시작시각을 추적하고 10초 이내 동일 도어 재입력 시 override 성립을 판정한다. | side, approachRiskActive, unlockRequestedNow, now | OverrideDecision{overrideActive, since, reasonCode} | side별 억제 시작 타임스탬프(최대 2개, 상한 고정) | 없음(입력은 이미 검증된 값만 수신) | SWR-006, SWR-009 | 기능적 |
+| SWC-ENG-01 | SWR-022 8단계 우선순위에 따라 좌·우 도어의 출력·제어상태·reasonCode를 결정한다(무상태 순수 함수). | ValidatedVehicleSnapshot, ValidatedDriverCommand 목록, LastConfirmedOutput, OverrideDecision(좌/우) | DecisionResult{lockLeft, lockRight, controlState, reasonCode, overrideLeft/overrideRight} | 무상태(순수 계산) | 입력 DTO 자체는 이미 검증되었으므로 이 컴포넌트는 추가 오류 처리를 하지 않음(설계상 오류 없음 보장은 상위 검증 컴포넌트의 책임) | SWR-001,002,003,004,005,006,007,008,009,017,018,020,021,022 | 기능적 |
+| SWC-STM-01 | 마지막으로 확정된 lockLeft/lockRight와 제어상태(controlState)를 보관하고 조회를 제공한다. | commit(decision: DecisionResult) / get() | LastConfirmedOutput | lockLeft, lockRight, controlState (초기값: RELEASE/RELEASE/NORMAL — 시스템 기동 시 안전한 기본값. 초기값의 안전성 재확인은 §11.4 참조) | 없음(단순 저장) | SWR-021(직전 확정 출력 유지의 근거 데이터) | 기능적 |
+| SWC-REC-01 | 결정 레코드를 최근 100건까지 FIFO로 메모리에 보관한다. | append(record: DecisionRecord) | getRecent(recordCount) | `deque(maxlen=100)`(상한 고정) | 없음(허용 필드 외 데이터는 스키마 자체에서 배제) | SWR-010, SWR-011, SWR-012 | 기능적 |
+| SWC-QRY-01 | 현재 lockLeft/lockRight, state, inputValidity, 최근 reasonCode로 상태조회 응답을 구성한다. | StateManager.get(), DecisionRecordStore.getRecent(1), SafetyInputValidator의 freshnessStatus | StatusSnapshot | 무상태 | 없음(하위 컴포넌트 값을 그대로 조합) | SWR-014 | 기능적 |
+| SWC-DSP-01 | StatusSnapshot을 OEM-IF-006 형식(state, priorityReason, reasonCode, inputValidity)으로 직렬화한다. | StatusSnapshot | 직렬화된 표시 페이로드 또는 오류 | 무상태 | 직렬화 실패 시 오류 계약(HTTP 500, §6.2 IF-EXT-006) | SWR-015 | 기능적 |
+| SWC-DEF-01 | reasonCode/경고코드의 불변 목록을 정의한다. | — | 상수 참조값 | 없음(불변) | 없음 | SWR-014, SWR-015, SWR-017, SWR-021 등 reasonCode 참조 전반 | 기능적(단, "정의 카탈로그"로서 응집도 판정은 자료 성격상 참고용) |
 | SWC-ADP-VEH/CMD/ACT/WEB/CLK-* | (각 어댑터) 정확히 하나의 외부 경계를 코어 포트로 번역한다. | 외부 프로토콜별 원시 데이터 | 코어 포트 호출 또는 외부 응답 | 어댑터별 최소 상태(예: HTTP 소켓) | 프로토콜 수준 오류(잘못된 HTTP 요청 등)를 코어에 전파하지 않고 자체 오류 응답 | §6.2 외부 인터페이스 전체 | 기능적(어댑터당 단일 경계) |
 
 ### 4.1 SOLID 자체 점검표
@@ -203,12 +204,12 @@ flowchart TB
 | SWC-ORC-01 | Pass — 책임은 "실행순서 보증" 하나뿐 | Pass — 신규 단계 추가 시 순서표 확장, 기존 단계 로직 불변 | Pass — 대체 구현 없음(해당 없음으로 처리) | Pass — Adapter에는 RunEvaluationCycle 하나만 노출 | Pass — StateManager/Engine/RecordStore 등을 구체클래스가 아닌 자신이 선언한 필요 인터페이스로만 참조(구성 시점 주입) |
 | SWC-VAL-01 | Pass — "Vehicle 안전입력 검증"만 | Pass — 신규 안전입력 필드 추가 시 검증 규칙 추가로 확장 가능 | Pass | Pass — Orchestrator/Engine이 필요한 조회만 노출(원시 데이터 미노출) | Pass — ClockPort 인터페이스에만 의존 |
 | SWC-VAL-02 | Pass — "운전자 명령 검증"만 | Pass — 신규 명령 필드/enum 추가 시 규칙 확장 | Pass | Pass | Pass — 외부 의존 없음(순수 검증) |
-| SWC-OVR-01 | Pass — "override 판정"만 | Pass — 판정 조건(예: 시간 임계값) 변경이 이 컴포넌트 내부로 국한 | Pass | Pass — Engine에는 Evaluate() 하나만 노출 | Pass — ClockPort에만 의존 |
-| SWC-ENG-01 | Pass — "8단계 판정"만(레코드/조회/직렬화는 분리됨) | Pass(조건부) — 신규 순위 판정 스텝은 추가로 확장 가능하나, 8단계 정책 자체의 순서 변경은 SWR-022 재해석에 해당하므로 아키텍처가 임의로 허용하지 않음(의도된 제한) | Pass — 단일 구현체, 계약은 §6 인터페이스 명세로 고정 | Pass — Orchestrator에는 Decide() 하나만 노출, StatusQueryService는 Engine을 직접 호출하지 않음(StateManager를 통해서만 결과 조회) | Pass — StateManager/OverrideTracker를 자신이 정의한 Required Port 인터페이스로 참조 |
-| SWC-STM-01 | Pass — "마지막 확정 출력 보관"만 | Pass — 필드 추가 시 Commit/Get 계약 확장으로 흡수 | Pass | Pass — Commit(쓰기)/Get(읽기) 최소 연산만 노출, StatusQueryService는 Get만 사용 | Pass — 외부 의존 없음 |
-| SWC-REC-01 | Pass — "FIFO 100건 보관"만 | Pass — 스키마 필드 추가는 DecisionRecord DTO 확장으로 흡수 | Pass | Pass — Append/GetRecent만 노출 | Pass — 외부 의존 없음 |
+| SWC-OVR-01 | Pass — "override 판정"만 | Pass — 판정 조건(예: 시간 임계값) 변경이 이 컴포넌트 내부로 국한 | Pass | Pass — Engine에는 evaluate() 하나만 노출 | Pass — ClockPort에만 의존 |
+| SWC-ENG-01 | Pass — "8단계 판정"만(레코드/조회/직렬화는 분리됨) | Pass(조건부) — 신규 순위 판정 스텝은 추가로 확장 가능하나, 8단계 정책 자체의 순서 변경은 SWR-022 재해석에 해당하므로 아키텍처가 임의로 허용하지 않음(의도된 제한) | Pass — 단일 구현체, 계약은 §6 인터페이스 명세로 고정 | Pass — Orchestrator에는 decide() 하나만 노출, StatusQueryService는 Engine을 직접 호출하지 않음(StateManager를 통해서만 결과 조회) | Pass — OverrideTracker를 자신이 정의한 Required Port 인터페이스로 참조. StateManager 값(lastConfirmed)은 Orchestrator가 조회해 매개변수로 전달하므로 Engine은 StateManager에 대한 의존을 전혀 갖지 않음(§3.4/§7.1 불일치 정정, Rev 0.2에서 해소) |
+| SWC-STM-01 | Pass — "마지막 확정 출력 보관"만 | Pass — 필드 추가 시 commit/get 계약 확장으로 흡수 | Pass | Pass — commit(쓰기)/get(읽기) 최소 연산만 노출, StatusQueryService는 get만 사용 | Pass — 외부 의존 없음 |
+| SWC-REC-01 | Pass — "FIFO 100건 보관"만 | Pass — 스키마 필드 추가는 DecisionRecord DTO 확장으로 흡수 | Pass | Pass — append/getRecent만 노출 | Pass — 외부 의존 없음 |
 | SWC-QRY-01 | Pass — "상태조회 응답 조합"만(직렬화는 DisplaySerializer로 분리) | Pass | Pass | Pass | Pass — StateManager/RecordStore/SafetyInputValidator를 인터페이스로만 참조 |
-| SWC-DSP-01 | Pass — "직렬화 및 오류계약"만 | Pass — 신규 표시 필드 추가는 직렬화 매핑 확장으로 흡수. `display_priority`(§6.1 IF-INT-007 비고, §9.4) 확장 지점을 통해 Phase 4 확장을 사전에 수용 | Pass | Pass | Pass — StatusQueryService 인터페이스에만 의존 |
+| SWC-DSP-01 | Pass — "직렬화 및 오류계약"만 | Pass — 신규 표시 필드 추가는 직렬화 매핑 확장으로 흡수. `displayPriority`(§6.1 IF-INT-007 비고, §9.4) 확장 지점을 통해 Phase 4 확장을 사전에 수용 | Pass | Pass | Pass — StatusQueryService 인터페이스에만 의존 |
 | 어댑터 그룹(SWC-ADP-*) | Pass — 어댑터당 정확히 하나의 외부 경계 | Pass — 신규 채널(예: 실제 CAN 어댑터) 추가 시 동일 포트를 구현하는 신규 어댑터로 확장, 코어 무변경 | Pass — 동일 포트 계약을 지키는 한 어댑터 교체 가능(Web↔실HW) | Pass — 각 어댑터는 자신이 실제로 쓰는 포트만 구현 | Pass — 코어가 정의한 포트 인터페이스를 구현(어댑터→코어 방향 의존, 역방향 없음) |
 
 Fail 판정 항목 없음. 전 컴포넌트 SRP/OCP/LSP/ISP/DIP Pass.
@@ -241,7 +242,7 @@ flowchart TB
     ORC -->|ClockPort| ADP_CLK["SWC-ADP-CLK-SYS / -FIX"]
 
     ENG --> OVR["SWC-OVR-01"]
-    ENG --> STM
+    ORC --> STM
 
     VAL1 -->|ClockPort| ADP_CLK
     OVR -->|ClockPort| ADP_CLK
@@ -259,13 +260,12 @@ flowchart TB
 
 | 관계(From → To) | 결합도 유형 | 판정 근거 |
 |---|---|---|
-| SWC-ORC-01 → SWC-VAL-01/02 | 데이터 | `Validate(now)` 호출, 반환값은 필요한 필드만 담은 DTO |
-| SWC-ORC-01 → SWC-ENG-01 | 데이터 | `Decide(snapshot, commands, lastConfirmed)` — Engine이 실제로 사용하는 필드만 전달 |
-| SWC-ORC-01 → SWC-STM-01 | 데이터 | `Commit(decisionResult)` / `Get()` — 값 객체만 이동 |
-| SWC-ORC-01 → SWC-REC-01 | 데이터 | `Append(record)` — DecisionRecord DTO(SWR-010 허용 필드만) |
-| SWC-ORC-01 → SWC-ADP-ACT(ActuatorOutputPort) | 데이터 | `Apply(lock_left, lock_right)` — 2개 열거값만 전달 |
-| SWC-ENG-01 → SWC-OVR-01 | 데이터 | `Evaluate(side, approach_risk_active, unlock_requested_now, now)` |
-| SWC-ENG-01 → SWC-STM-01 | 데이터 | `Get()`(읽기 전용) |
+| SWC-ORC-01 → SWC-VAL-01/02 | 데이터 | `validate(now)` 호출, 반환값은 필요한 필드만 담은 DTO |
+| SWC-ORC-01 → SWC-ENG-01 | 데이터 | `decide(snapshot, commands, lastConfirmed)` — Engine이 실제로 사용하는 필드만 전달. `lastConfirmed`는 Orchestrator가 `SWC-STM-01.get()`으로 먼저 조회해 매개변수로 전달한다(아래 ORC→STM 행 참조, Rev 0.2에서 §5.1/§7.1과 정합화됨) |
+| SWC-ORC-01 → SWC-STM-01 | 데이터 | `commit(decision)` / `get()` — 값 객체만 이동. `get()`은 (1) Engine 호출 전 `lastConfirmed` 조회, (2) 이후 `commit()`으로 결정 반영, 2가지 목적으로 Orchestrator가 사용한다 |
+| SWC-ORC-01 → SWC-REC-01 | 데이터 | `append(record)` — DecisionRecord DTO(SWR-010 허용 필드만) |
+| SWC-ORC-01 → SWC-ADP-ACT(ActuatorOutputPort) | 데이터 | `apply(lockLeft, lockRight)` — 2개 열거값만 전달 |
+| SWC-ENG-01 → SWC-OVR-01 | 데이터 | `evaluate(side, approachRiskActive, unlockRequestedNow, now)` |
 | SWC-QRY-01 → SWC-STM-01/REC-01/VAL-01 | 데이터 | 각각 필요한 조회 연산만 호출(§6.1) |
 | SWC-DSP-01 → SWC-QRY-01 | 데이터 | `StatusSnapshot` 하나만 전달받아 직렬화 |
 | 전 어댑터 → 코어 포트 | 데이터 | 포트가 선언한 시그니처의 값만 전달(§6) |
@@ -284,36 +284,36 @@ flowchart TB
 
 | ID | 제공자 | 사용자 | 연산/시그니처 | 데이터 계약 | 사전/사후조건 | 시간 제약 | 오류 계약 | 재진입성 | 버전 | 할당 요구사항 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| IF-INT-001 | SWC-VAL-01 (Driving Port `SubmitVehicleSignal`) | SWC-ADP-VEH, SWC-ADP-WEB | `submit_vehicle_signal(group_id, fields: dict, source_timestamp_s: float) -> None` | group_id ∈ {IF-001,002,003,007,008,009}; fields는 그룹별 정의된 필드만; source_timestamp_s는 초 단위 실수 | 사전: 그룹 식별자가 유효해야 함. 사후: 최신값으로 내부 버퍼 갱신 | 호출 즉시 반영(동기), 평가주기 시작 전 최신값 사용 | 미등록 group_id는 예외 없이 무시 + 오류기록 | 재진입 불가 필요 없음(단일 스레드, §2.8) | v1.0 | SWR-013-A, SWR-013-B |
-| IF-INT-002 | SWC-VAL-02 (Driving Port `SubmitDriverCommand`) | SWC-ADP-CMD, SWC-ADP-WEB | `submit_driver_command(side, action, source) -> None` | side/action/source는 OEM-IF-004 원시값(검증 전) | 사전: 없음(원시값 그대로 수신). 사후: 명령 큐에 적재 | 동기, 평가주기 시작 전까지 큐 적재 | 필드 자체가 없어도 예외 없이 수신 후 §6.1 IF-INT-009에서 거절 판정 | 단일 스레드 | v1.0 | SWR-019 |
-| IF-INT-003 | SWC-ADP-ACT (Driven Port `ActuatorOutputPort`) | SWC-ORC-01 | `apply(lock_left: {LOCK,RELEASE}, lock_right: {LOCK,RELEASE}) -> None` | 열거값 2개만 | 사전: Engine 판정 완료. 사후: 어댑터가 즉시 적용 확인 | 평가주기당 1회, 지연 없이 동기 반영 | 어댑터 적용 실패 시 예외를 Orchestrator로 전파(→ §9 안전상태 경로) | 단일 스레드 | v1.0 | 전 출력결정 SWR 공통 |
+| IF-INT-001 | SWC-VAL-01 (Driving Port `SubmitVehicleSignal`) | SWC-ADP-VEH, SWC-ADP-WEB | `submitVehicleSignal(groupId, fields: dict, sourceTimestampS: float) -> None` | groupId ∈ {IF-001,002,003,007,008,009}; fields는 그룹별 정의된 필드만; sourceTimestampS는 초 단위 실수 | 사전: 그룹 식별자가 유효해야 함. 사후: 최신값으로 내부 버퍼 갱신 | 호출 즉시 반영(동기), 평가주기 시작 전 최신값 사용 | 미등록 groupId는 예외 없이 무시 + 오류기록 | 재진입 불가 필요 없음(단일 스레드, §2.8) | v1.0 | SWR-013-A, SWR-013-B |
+| IF-INT-002 | SWC-VAL-02 (Driving Port `SubmitDriverCommand`) | SWC-ADP-CMD, SWC-ADP-WEB | `submitDriverCommand(side, action, source) -> None` | side/action/source는 OEM-IF-004 원시값(검증 전) | 사전: 없음(원시값 그대로 수신). 사후: 명령 큐에 적재 | 동기, 평가주기 시작 전까지 큐 적재 | 필드 자체가 없어도 예외 없이 수신 후 §6.1 IF-INT-009에서 거절 판정 | 단일 스레드 | v1.0 | SWR-019 |
+| IF-INT-003 | SWC-ADP-ACT (Driven Port `ActuatorOutputPort`) | SWC-ORC-01 | `apply(lockLeft: {LOCK,RELEASE}, lockRight: {LOCK,RELEASE}) -> None` | 열거값 2개만 | 사전: Engine 판정 완료. 사후: 어댑터가 즉시 적용 확인 | 평가주기당 1회, 지연 없이 동기 반영 | 어댑터 적용 실패 시 예외를 Orchestrator로 전파(→ §9 안전상태 경로) | 단일 스레드 | v1.0 | 전 출력결정 SWR 공통 |
 | IF-INT-004 | SWC-ADP-CLK-SYS / SWC-ADP-CLK-FIX (Driven Port `ClockPort`) | SWC-ORC-01, SWC-VAL-01, SWC-OVR-01 | `now() -> float`(초 단위) | 단조 증가 실수 | 사전 없음. 사후: 호출 시점 시각 반환 | 호출당 O(1) | 없음(항상 값 반환) | 재진입 가능(순수 조회) | v1.0 | SWR-016 |
-| IF-INT-005 | SWC-ORC-01 (Driving Port `RunEvaluationCycle`) | SWC-ADP-WEB, PC/SIL 테스트 하니스(§13 비고) | `run_cycle() -> CycleResult` | 반환값 없음 또는 요약 결과(성공/실패) | 사전: 코어 구성 완료. 사후: §4 SWC-ORC-01 흐름 전부 완료 | 1회 호출=1 평가주기, 300ms 이내 완료(SWR-007 근거) | 하위 예외 발생 시 §9 안전상태로 귀결, 예외를 호출자에 재전파하지 않음(호출자는 "완료"만 확인) | 단일 스레드(동시 호출 없음, §2.8) | v1.0 | SWR-004, SWR-016, SWR-022 |
-| IF-INT-006 | SWC-QRY-01 (Driving Port `QueryStatus`) | SWC-ADP-WEB | `query_status() -> StatusSnapshot{lock_left, lock_right, state, input_validity, reason_code}` | §4 SWC-QRY-01 참조 | 사전: 최소 1회 평가주기 완료. 사후: 순수 조회, 부수효과 없음 | O(1), 동기 | 없음(항상 최신 스냅샷 반환) | 재진입 가능 | v1.0 | SWR-014 |
-| IF-INT-007 | SWC-DSP-01 (Driving Port `QueryDisplay`) | SWC-ADP-WEB | `query_display() -> DisplayPayload{state, priority_reason, reason_code, input_validity}` 또는 직렬화 오류 | priority_reason == reason_code(SWR-015). **비고**: `display_priority`(DEGRADED와 FAULT/OFF 동시발생 시 표시 우선순위) 필드는 **TBD — Phase 4에서 확정**(SWE1-001 §8.3 잔존-3과 동일 사안, §9.4 참조). 현재 구현은 잠정 규칙(FAULT/OFF가 DEGRADED보다 우선 표시)을 placeholder로 사용하며 확정 아님 | 사전: QueryStatus 성공. 사후: 직렬화 성공 시 페이로드, 실패 시 오류 | O(1), 동기 | 직렬화 실패 시 오류 계약(§6.2 IF-EXT-006과 연계, HTTP 500) | 재진입 가능 | v1.0(display_priority는 v-TBD) | SWR-015 |
-| IF-INT-008 | SWC-VAL-01 (내부 연산 `validate(now)`) | SWC-ORC-01 | `validate(now: float) -> ValidatedVehicleSnapshot` | §4 SWC-VAL-01 DTO | 사전: 없음. 사후: 필드별 validity/freshness_status 확정 | 100ms 이내(SWR-013-A) | 필드별 INVALID/STALE 마킹, 예외 없음 | 재진입 가능(무상태) | v1.0 | SWR-013-A, SWR-013-B |
-| IF-INT-009 | SWC-VAL-02 (내부 연산 `validate()`) | SWC-ORC-01 | `validate() -> list[ValidatedDriverCommand]` | §4 SWC-VAL-02 DTO | 사전 없음. 사후: 큐의 각 명령에 accepted/rejection_reason 부여 | 동기 | 거절된 명령은 accepted=False + rejection_reason 기록(예외 없음) | 재진입 가능 | v1.0 | SWR-019 |
-| IF-INT-010 | SWC-OVR-01 (내부 연산 `evaluate`) | SWC-ENG-01 | `evaluate(side, approach_risk_active: bool, unlock_requested_now: bool, now: float) -> OverrideDecision` | side ∈ {left,right} | 사전: approach_risk_active 값이 이미 검증됨. 사후: 10초 경계 판정(SWR-006) | 경계값 199/200/201ms 급의 정밀도까지는 불필요하나 10.0s 경계는 정확히 판정 | 없음 | 재진입 가능(무상태 계산, 내부 타임스탬프는 side별 독립 저장) | v1.0 | SWR-006, SWR-009 |
-| IF-INT-011 | SWC-STM-01 (내부 연산 `get`) | SWC-ENG-01, SWC-QRY-01 | `get() -> LastConfirmedOutput{lock_left, lock_right, control_state}` | 열거값 3개 | 사전 없음. 사후: 순수 조회 | O(1) | 없음 | 재진입 가능 | v1.0 | SWR-021 |
+| IF-INT-005 | SWC-ORC-01 (Driving Port `RunEvaluationCycle`) | SWC-ADP-WEB, PC/SIL 테스트 하니스(§13 비고) | `runCycle() -> CycleResult` | 반환값 없음 또는 요약 결과(성공/실패) | 사전: 코어 구성 완료. 사후: §4 SWC-ORC-01 흐름 전부 완료 | 1회 호출=1 평가주기, 300ms 이내 완료(SWR-007 근거) | 하위 예외 발생 시 §9 안전상태로 귀결, 예외를 호출자에 재전파하지 않음(호출자는 "완료"만 확인) | 단일 스레드(동시 호출 없음, §2.8) | v1.0 | SWR-004, SWR-016, SWR-022 |
+| IF-INT-006 | SWC-QRY-01 (Driving Port `QueryStatus`) | SWC-ADP-WEB | `queryStatus() -> StatusSnapshot{lockLeft, lockRight, state, inputValidity, reasonCode}` | §4 SWC-QRY-01 참조 | 사전: 최소 1회 평가주기 완료. 사후: 순수 조회, 부수효과 없음 | O(1), 동기 | 없음(항상 최신 스냅샷 반환) | 재진입 가능 | v1.0 | SWR-014 |
+| IF-INT-007 | SWC-DSP-01 (Driving Port `QueryDisplay`) | SWC-ADP-WEB | `queryDisplay() -> DisplayPayload{state, priorityReason, reasonCode, inputValidity}` 또는 직렬화 오류 | priorityReason == reasonCode(SWR-015). **비고**: `displayPriority`(DEGRADED와 FAULT/OFF 동시발생 시 표시 우선순위) 필드는 **TBD — Phase 4에서 확정**(SWE1-001 §8.3 잔존-3과 동일 사안, §9.4 참조). 현재 구현은 잠정 규칙(FAULT/OFF가 DEGRADED보다 우선 표시)을 placeholder로 사용하며 확정 아님 | 사전: QueryStatus 성공. 사후: 직렬화 성공 시 페이로드, 실패 시 오류 | O(1), 동기 | 직렬화 실패 시 오류 계약(§6.2 IF-EXT-006과 연계, HTTP 500) | 재진입 가능 | v1.0(displayPriority는 v-TBD) | SWR-015 |
+| IF-INT-008 | SWC-VAL-01 (내부 연산 `validate(now)`) | SWC-ORC-01 | `validate(now: float) -> ValidatedVehicleSnapshot` | §4 SWC-VAL-01 DTO | 사전: 없음. 사후: 필드별 validity/freshnessStatus 확정 | 100ms 이내(SWR-013-A) | 필드별 INVALID/STALE 마킹, 예외 없음 | 재진입 가능(무상태) | v1.0 | SWR-013-A, SWR-013-B |
+| IF-INT-009 | SWC-VAL-02 (내부 연산 `validate()`) | SWC-ORC-01 | `validate() -> list[ValidatedDriverCommand]` | §4 SWC-VAL-02 DTO | 사전 없음. 사후: 큐의 각 명령에 accepted/rejectionReason 부여 | 동기 | 거절된 명령은 accepted=False + rejectionReason 기록(예외 없음) | 재진입 가능 | v1.0 | SWR-019 |
+| IF-INT-010 | SWC-OVR-01 (내부 연산 `evaluate`) | SWC-ENG-01 | `evaluate(side, approachRiskActive: bool, unlockRequestedNow: bool, now: float) -> OverrideDecision` | side ∈ {left,right} | 사전: approachRiskActive 값이 이미 검증됨. 사후: 10초 경계 판정(SWR-006) | 경계값 199/200/201ms 급의 정밀도까지는 불필요하나 10.0s 경계는 정확히 판정 | 없음 | 재진입 가능(무상태 계산, 내부 타임스탬프는 side별 독립 저장) | v1.0 | SWR-006, SWR-009 |
+| IF-INT-011 | SWC-STM-01 (내부 연산 `get`) | SWC-ORC-01, SWC-QRY-01 | `get() -> LastConfirmedOutput{lockLeft, lockRight, controlState}` | 열거값 3개 | 사전 없음. 사후: 순수 조회 | O(1) | 없음 | 재진입 가능 | v1.0 | SWR-021 (Rev 0.2: 사용자가 SWC-ENG-01에서 SWC-ORC-01로 정정 — §3.4/§5.1/§5.2/§7.1 불일치 해소, `decide()`는 `lastConfirmed`를 매개변수로만 받고 StateManager를 직접 호출하지 않음) |
 | IF-INT-012 | SWC-ENG-01 (내부 연산 `decide`) | SWC-ORC-01 | `decide(snapshot, commands, lastConfirmed) -> DecisionResult` | §4 SWC-ENG-01 DTO | 사전: snapshot/commands가 이미 검증됨. 사후: SWR-022 8단계 전부 평가 완료 | 300ms 예산 내(SWR-007) | 없음(입력이 이미 유효함이 보장됨) | 재진입 가능(무상태 순수함수) | v1.0 | SWR-001~009,017,018,020,021,022 |
 | IF-INT-013 | SWC-STM-01 (내부 연산 `commit`) | SWC-ORC-01 | `commit(decision: DecisionResult) -> None` | DecisionResult 전체 | 사전: decide() 완료. 사후: 내부 상태 갱신 | O(1) | 없음 | 단일 스레드 | v1.0 | SWR-021 |
-| IF-INT-014 | SWC-REC-01 (내부 연산 `append`) | SWC-ORC-01 | `append(record: DecisionRecord) -> None` | sequence_id, timestamp, lock_left, lock_right, state, reason_code(SWR-010 허용 필드만) | 사전 없음. 사후: 100건 초과 시 최고령 1건 제거(SWR-011) | O(1) | 없음(스키마 자체가 허용 외 필드를 배제) | 단일 스레드 | v1.0 | SWR-010, SWR-011, SWR-012 |
-| IF-INT-015 | SWC-REC-01 (내부 연산 `get_recent`) | SWC-QRY-01 | `get_recent(n: int) -> list[DecisionRecord]` | n ≤ 100 | 사전 없음. 사후: 순수 조회 | O(n) | 없음 | 재진입 가능 | v1.0 | SWR-014 |
-| IF-INT-016 | SWC-VAL-01 (내부 연산 `freshness_status`) | SWC-QRY-01 | `freshness_status() -> {OK, DEGRADED}` (필드별 상세는 input_validity로 별도 노출) | 열거값 | 사전 없음 | O(1) | 없음 | 재진입 가능 | v1.0 | SWR-013-A, SWR-014 |
+| IF-INT-014 | SWC-REC-01 (내부 연산 `append`) | SWC-ORC-01 | `append(record: DecisionRecord) -> None` | sequenceId, timestamp, lockLeft, lockRight, state, reasonCode(SWR-010 허용 필드만) | 사전 없음. 사후: 100건 초과 시 최고령 1건 제거(SWR-011) | O(1) | 없음(스키마 자체가 허용 외 필드를 배제) | 단일 스레드 | v1.0 | SWR-010, SWR-011, SWR-012 |
+| IF-INT-015 | SWC-REC-01 (내부 연산 `getRecent`) | SWC-QRY-01 | `getRecent(recordCount: int) -> list[DecisionRecord]` | recordCount ≤ 100 | 사전 없음. 사후: 순수 조회 | O(n) | 없음 | 재진입 가능 | v1.0 | SWR-014 |
+| IF-INT-016 | SWC-VAL-01 (내부 연산 `freshnessStatus`) | SWC-QRY-01 | `freshnessStatus() -> {OK, DEGRADED}` (필드별 상세는 inputValidity로 별도 노출) | 열거값 | 사전 없음 | O(1) | 없음 | 재진입 가능 | v1.0 | SWR-013-A, SWR-014 |
 
 ### 6.2 외부 인터페이스
 
 | ID | 방향 | 대응 OEM-IF | 실현 어댑터 | 주요 필드/데이터 계약 | 오류 계약 | 할당 요구사항 |
 |---|---|---|---|---|---|---|
-| IF-EXT-001 | Vehicle → SW | OEM-IF-001 | SWC-ADP-VEH/WEB | vehicle_speed_kph(실수, **0.0~300.0 km/h**, 사용자 확정), gear(**열거형 {P,N,D,R}**, 사용자 확정), source_timestamp_s(초) | 범위 밖/미등록 값은 SWC-VAL-01이 IF-INT-008에서 INVALID 처리 | SWR-003, SWR-013-A, SWR-013-B |
-| IF-EXT-002 | Vehicle → SW | OEM-IF-002 | SWC-ADP-VEH/WEB | crash_status ∈ {NONE, PENDING, CONFIRMED} | 미등록 값 INVALID(SWR-013-B) | SWR-007, SWR-008, SWR-022 |
-| IF-EXT-003 | Vehicle → SW | OEM-IF-003 | SWC-ADP-VEH/WEB | rear_left/right_approach_risk ∈ {TRUE, FALSE} | 형식오류 INVALID | SWR-005, SWR-006, SWR-009, SWR-022 |
+| IF-EXT-001 | Vehicle → SW | OEM-IF-001 | SWC-ADP-VEH/WEB | vehicleSpeedKph(실수, **0.0~300.0 km/h**, 사용자 확정), gear(**열거형 {P,N,D,R}**, 사용자 확정), sourceTimestampS(초) | 범위 밖/미등록 값은 SWC-VAL-01이 IF-INT-008에서 INVALID 처리 | SWR-003, SWR-013-A, SWR-013-B |
+| IF-EXT-002 | Vehicle → SW | OEM-IF-002 | SWC-ADP-VEH/WEB | crashStatus ∈ {NONE, PENDING, CONFIRMED} | 미등록 값 INVALID(SWR-013-B) | SWR-007, SWR-008, SWR-022 |
+| IF-EXT-003 | Vehicle → SW | OEM-IF-003 | SWC-ADP-VEH/WEB | rearLeftApproachRisk/rearRightApproachRisk ∈ {TRUE, FALSE} | 형식오류 INVALID | SWR-005, SWR-006, SWR-009, SWR-022 |
 | IF-EXT-004 | Driver/HMI → SW | OEM-IF-004 | SWC-ADP-CMD/WEB | side∈{left,right,all}, action∈{lock,unlock}, source∈{physical_button,avn,voice,mobile_app} | 누락/형식/미등록 enum → SWC-VAL-02가 거절(SWR-019) | SWR-001,002,004,019,022 |
-| IF-EXT-005 | SW → Actuator | OEM-IF-005 | SWC-ADP-ACT | lock_left, lock_right ∈ {LOCK, RELEASE} | 어댑터 적용 실패 → §9 안전상태 | 전 출력결정 SWR 공통 |
-| IF-EXT-006 | SW → Display | OEM-IF-006 | SWC-ADP-WEB(HTTP 응답) | state, priority_reason, reason_code, input_validity | 직렬화 실패 시 **HTTP 500**(SWR-015) | SWR-014, SWR-015 |
-| IF-EXT-007 | Vehicle → SW | OEM-IF-007 | SWC-ADP-VEH/WEB | fire_detected, overtemperature_detected, adult_present ∈ {TRUE, FALSE} | 형식오류 INVALID | SWR-017, SWR-022 |
-| IF-EXT-008 | Vehicle → SW | OEM-IF-008 | SWC-ADP-VEH/WEB | isofix_left, isofix_right ∈ {TRUE, FALSE} | 형식오류 INVALID | SWR-018, SWR-022 |
-| IF-EXT-009 | Vehicle → SW | OEM-IF-009 | SWC-ADP-VEH/WEB | ignition_on, sensor_fault ∈ {TRUE, FALSE} | 형식오류 INVALID | SWR-020, SWR-021, SWR-022 |
+| IF-EXT-005 | SW → Actuator | OEM-IF-005 | SWC-ADP-ACT | lockLeft, lockRight ∈ {LOCK, RELEASE} | 어댑터 적용 실패 → §9 안전상태 | 전 출력결정 SWR 공통 |
+| IF-EXT-006 | SW → Display | OEM-IF-006 | SWC-ADP-WEB(HTTP 응답) | state, priorityReason, reasonCode, inputValidity | 직렬화 실패 시 **HTTP 500**(SWR-015) | SWR-014, SWR-015 |
+| IF-EXT-007 | Vehicle → SW | OEM-IF-007 | SWC-ADP-VEH/WEB | fireDetected, overtemperatureDetected, adultPresent ∈ {TRUE, FALSE} | 형식오류 INVALID | SWR-017, SWR-022 |
+| IF-EXT-008 | Vehicle → SW | OEM-IF-008 | SWC-ADP-VEH/WEB | isofixLeft, isofixRight ∈ {TRUE, FALSE} | 형식오류 INVALID | SWR-018, SWR-022 |
+| IF-EXT-009 | Vehicle → SW | OEM-IF-009 | SWC-ADP-VEH/WEB | ignitionOn, sensorFault ∈ {TRUE, FALSE} | 형식오류 INVALID | SWR-020, SWR-021, SWR-022 |
 
 **변환/프로토콜 책임**: 모든 IF-EXT-*의 HTTP 표현(Web 시뮬레이터 경로) 변환 책임은 `SWC-ADP-WEB`에 있다. `SWC-ADP-WEB`은 `http.server.HTTPServer`만 사용하며(외부 프레임워크 금지), JSON 파싱/직렬화는 표준 라이브러리 `json` 모듈을 사용한다(§2.7).
 
@@ -335,17 +335,18 @@ sequenceDiagram
     participant REC as SWC-REC-01
 
     Driver->>ADP: HTTP 요청(side, action, source)
-    ADP->>VAL2: IF-INT-002 submit_driver_command
-    ADP->>ORC: IF-INT-005 run_cycle()
+    ADP->>VAL2: IF-INT-002 submitDriverCommand
+    ADP->>ORC: IF-INT-005 runCycle()
     ORC->>VAL2: IF-INT-009 validate()
     alt 유효성 실패
-        VAL2-->>ORC: accepted=False, rejection_reason
+        VAL2-->>ORC: accepted=False, rejectionReason
     else 유효
+        ORC->>STM: IF-INT-011 get()
+        STM-->>ORC: LastConfirmedOutput
         ORC->>ENG: IF-INT-012 decide(snapshot, commands, lastConfirmed)
-        ENG->>STM: IF-INT-011 get()
         ENG-->>ORC: DecisionResult(순위 1~7 무효 시 순위8 명령 반영)
         ORC->>STM: IF-INT-013 commit(decision)
-        ORC->>ACT: IF-INT-003 apply(lock_left, lock_right)
+        ORC->>ACT: IF-INT-003 apply(lockLeft, lockRight)
         ORC->>REC: IF-INT-014 append(record)
     end
     ADP-->>Driver: HTTP 응답
@@ -361,16 +362,16 @@ sequenceDiagram
     participant ENG as SWC-ENG-01
     participant OVR as SWC-OVR-01
 
-    ADP->>VAL1: IF-INT-001 submit_vehicle_signal(approach_risk=TRUE)
-    ADP->>ORC: IF-INT-005 run_cycle()
+    ADP->>VAL1: IF-INT-001 submitVehicleSignal(approachRisk=TRUE)
+    ADP->>ORC: IF-INT-005 runCycle()
     ORC->>VAL1: IF-INT-008 validate(now)
     ORC->>ENG: IF-INT-012 decide(...)
-    ENG->>OVR: IF-INT-010 evaluate(side, approach_risk_active=True, unlock_requested_now, now)
+    ENG->>OVR: IF-INT-010 evaluate(side, approachRiskActive=True, unlockRequestedNow, now)
     alt 경과시간 ≤ 10s AND unlock 재입력
-        OVR-->>ENG: override_active=True
+        OVR-->>ENG: overrideActive=True
         ENG-->>ORC: 해당 side RELEASE(순위4 예외)
     else 경과시간 > 10s 또는 재입력 없음
-        OVR-->>ENG: override_active=False
+        OVR-->>ENG: overrideActive=False
         ENG-->>ORC: 해당 side LOCK 유지(순위4)
     end
 ```
@@ -390,7 +391,7 @@ sequenceDiagram
     ORC->>VAL2: validate()
     ORC->>STM: get() [lastConfirmed]
     ORC->>ENG: decide(snapshot, commands, lastConfirmed)
-    Note over ENG: 순위1(crash) → 순위2(화재등) → 순위3(sensor_fault,\n순위1·2 예외) → 순위4(접근위험,\nOVR 조회) → 순위5(ISOFIX) →\n순위6(ignition-off) → 순위7(자동잠금) →\n순위8(운전자명령) 순서로 좌/우 각각 최초로\n유효한 순위의 지시를 채택, 이후 순위는 평가하지 않음
+    Note over ENG: 순위1(crash) → 순위2(화재등) → 순위3(sensorFault,\n순위1·2 예외) → 순위4(접근위험,\nOVR 조회) → 순위5(ISOFIX) →\n순위6(ignition-off) → 순위7(자동잠금) →\n순위8(운전자명령) 순서로 좌/우 각각 최초로\n유효한 순위의 지시를 채택, 이후 순위는 평가하지 않음
     ENG->>OVR: evaluate(...) [순위4 판정 시에만 호출]
     ENG-->>ORC: DecisionResult(좌/우 개별 확정)
 ```
@@ -405,8 +406,8 @@ sequenceDiagram
     participant DSP as SWC-DSP-01
 
     Client->>ADP: 상태조회 HTTP 요청
-    ADP->>QRY: IF-INT-006 query_status()
-    ADP->>DSP: IF-INT-007 query_display()
+    ADP->>QRY: IF-INT-006 queryStatus()
+    ADP->>DSP: IF-INT-007 queryDisplay()
     alt 직렬화 성공
         DSP-->>ADP: DisplayPayload
         ADP-->>Client: 200 OK + payload
@@ -425,29 +426,29 @@ sequenceDiagram
 ```mermaid
 stateDiagram-v2
     [*] --> Normal
-    Normal --> Suppressed: approach_risk=TRUE (SWR-005, 순위4)\nSWC-OVR-01: 억제 시작시각 기록
+    Normal --> Suppressed: approachRisk=TRUE (SWR-005, 순위4)\nSWC-OVR-01: 억제 시작시각 기록
     Suppressed --> Suppressed: unlock 재입력, 경과시간>10s (SWR-006 A1)
-    Suppressed --> Released: unlock 재입력, 경과시간<=10s (SWR-006)\nSWC-OVR-01: override_active=True
+    Suppressed --> Released: unlock 재입력, 경과시간<=10s (SWR-006)\nSWC-OVR-01: overrideActive=True
     Suppressed --> Released: crash CONFIRMED 또는 화재등 TRUE 동시발생\n(SWR-022 순위1·2가 순위4보다 우선)
-    Released --> Normal: approach_risk=FALSE
-    Suppressed --> Normal: approach_risk=FALSE
+    Released --> Normal: approachRisk=FALSE
+    Suppressed --> Normal: approachRisk=FALSE
     Normal --> [*]
 ```
 
-### 8.2 제어상태(control_state) — SWC-STM-01이 보관하는 값
+### 8.2 제어상태(controlState) — SWC-STM-01이 보관하는 값
 
 ```mermaid
 stateDiagram-v2
     [*] --> NORMAL
-    NORMAL --> FAULT: sensor_fault=TRUE 이고 순위1·2 무효 (SWR-021, 순위3)
-    FAULT --> NORMAL: sensor_fault=FALSE
-    NORMAL --> OFF: ignition_on=FALSE 이고 순위1~5 무효 (SWR-020, 순위6)
-    OFF --> NORMAL: ignition_on=TRUE
-    FAULT --> OFF: 금지(순위3이 순위6보다 우선이므로 sensor_fault=TRUE인 동안 OFF로 전이하지 않음)
+    NORMAL --> FAULT: sensorFault=TRUE 이고 순위1·2 무효 (SWR-021, 순위3)
+    FAULT --> NORMAL: sensorFault=FALSE
+    NORMAL --> OFF: ignitionOn=FALSE 이고 순위1~5 무효 (SWR-020, 순위6)
+    OFF --> NORMAL: ignitionOn=TRUE
+    FAULT --> OFF: 금지(순위3이 순위6보다 우선이므로 sensorFault=TRUE인 동안 OFF로 전이하지 않음)
     OFF --> FAULT: 금지(동일 사유, 순위 역전 금지)
 ```
 
-**비고**: 위 `control_state`는 SWR-022의 LOCK/RELEASE 판정과 결합된 값이며, `state` 표시 필드에 그대로 노출되는 것은 아니다. `freshness_status`(DEGRADED, §8.3)와의 결합 규칙은 §9.4/§6.1 IF-INT-007 비고에 따라 **Phase 4 확장 지점**으로 남긴다.
+**비고**: 위 `controlState`는 SWR-022의 LOCK/RELEASE 판정과 결합된 값이며, `state` 표시 필드에 그대로 노출되는 것은 아니다. `freshnessStatus`(DEGRADED, §8.3)와의 결합 규칙은 §9.4/§6.1 IF-INT-007 비고에 따라 **Phase 4 확장 지점**으로 남긴다.
 
 ### 8.3 입력 freshness 상태 — SWC-VAL-01이 보관하는 값
 
@@ -458,7 +459,7 @@ stateDiagram-v2
     DEGRADED --> OK: 정상 갱신 재개
 ```
 
-금지 전이: `control_state`(§8.2)와 `freshness_status`(§8.3)는 서로 다른 컴포넌트(SWC-STM-01/SWC-ENG-01 vs SWC-VAL-01)가 독립적으로 관리하며, 한쪽이 다른 쪽 상태를 직접 강제 전이시키지 않는다(내용 결합 금지, §5.2). 둘을 조합해 단일 `state` 표시값을 만드는 규칙은 §9.4에서 다룬다.
+금지 전이: `controlState`(§8.2)와 `freshnessStatus`(§8.3)는 서로 다른 컴포넌트(SWC-STM-01/SWC-ENG-01 vs SWC-VAL-01)가 독립적으로 관리하며, 한쪽이 다른 쪽 상태를 직접 강제 전이시키지 않는다(내용 결합 금지, §5.2). 둘을 조합해 단일 `state` 표시값을 만드는 규칙은 §9.4에서 다룬다.
 
 ---
 
@@ -483,17 +484,17 @@ stateDiagram-v2
 ### 9.3 안전 상태 및 복구
 
 - SWR-022의 순위 1(crash CONFIRMED)·순위 2(화재/과열/성인탑승)는 요구사항 자체가 "좌·우 강제 RELEASE"를 안전 상태로 정의한다 — 아키텍처가 별도로 정의하지 않고 그대로 채택.
-- 순위 3(sensor_fault)의 안전 상태는 "직전 확정 출력 유지"이며, `SWC-STM-01`이 그 근거 데이터를 제공한다. 복구는 sensor_fault=FALSE 확인 시 즉시 정상 평가로 복귀(추가 지연 없음, SWE1-001에 별도 디바운스 요구 없음).
+- 순위 3(sensorFault)의 안전 상태는 "직전 확정 출력 유지"이며, `SWC-STM-01`이 그 근거 데이터를 제공한다. 복구는 sensorFault=FALSE 확인 시 즉시 정상 평가로 복귀(추가 지연 없음, SWE1-001에 별도 디바운스 요구 없음).
 - freshness DEGRADED(SWR-013-A)의 복구는 갱신 재개 즉시 이루어진다(§8.3).
-- **진단 정보 책임**: `SWC-VAL-01`이 input_validity(필드별), `SWC-STM-01`/`SWC-ENG-01`이 reason_code/경고코드(§SWC-DEF-01 참조)를 각각 책임진다.
+- **진단 정보 책임**: `SWC-VAL-01`이 inputValidity(필드별), `SWC-STM-01`/`SWC-ENG-01`이 reasonCode/경고코드(§SWC-DEF-01 참조)를 각각 책임진다.
 
 ### 9.4 DEGRADED 표시 우선순위 — Phase 4 확장 지점 (사용자 결정)
 
 `SWE1-001` §8.3 잔존-3에서 이미 식별된 대로, `state` 표시 필드(NORMAL/DEGRADED/FAULT/OFF) 중 DEGRADED(freshness 위반)와 나머지 트리거 기반 상태(FAULT/OFF, SWR-022 순위3/6에서 파생)가 동시에 성립할 때의 표시 우선순위는 SWR-022의 8단계 표에 포함되어 있지 않다. 이는 사용자 결정에 따라 **아키텍처 수준에서 강제로 해소하지 않고 Phase 4 확장 지점으로 명시적으로 남긴다**:
 
-- `SWC-DSP-01`(DisplaySerializer)의 인터페이스 계약(§6.1 IF-INT-007)에 `display_priority` 필드를 "TBD — Phase 4에서 확정"으로 명시했다.
+- `SWC-DSP-01`(DisplaySerializer)의 인터페이스 계약(§6.1 IF-INT-007)에 `displayPriority` 필드를 "TBD — Phase 4에서 확정"으로 명시했다.
 - 현재 구현은 임시 placeholder 규칙(FAULT/OFF가 DEGRADED보다 표시 우선)을 사용하되, 이는 **확정된 요구사항이 아니라 시스템이 항상 어떤 값이든 반환해야 하므로 둔 임시값**임을 코드/문서에 명시해야 한다(SWE.3 상세설계 지침으로 전달).
-- **중요**: 이 미확정 사항은 `state` 표시 필드에만 영향을 주며, `lock_left`/`lock_right`(도어 LOCK/RELEASE 실제 출력) 판정 로직(SWR-022 8단계, `SWC-ENG-01`)에는 어떤 영향도 주지 않는다. `PriorityDecisionEngine`은 `control_state`(NORMAL/FAULT/OFF)만 산출하며 DEGRADED 오버레이는 `SWC-VAL-01`이 독립적으로 산출하는 별개의 신호이다(§8.2, §8.3).
+- **중요**: 이 미확정 사항은 `state` 표시 필드에만 영향을 주며, `lockLeft`/`lockRight`(도어 LOCK/RELEASE 실제 출력) 판정 로직(SWR-022 8단계, `SWC-ENG-01`)에는 어떤 영향도 주지 않는다. `PriorityDecisionEngine`은 `controlState`(NORMAL/FAULT/OFF)만 산출하며 DEGRADED 오버레이는 `SWC-VAL-01`이 독립적으로 산출하는 별개의 신호이다(§8.2, §8.3).
 
 ---
 
@@ -547,7 +548,7 @@ stateDiagram-v2
 | INT-07 | SWC-ADP-WEB(http.server 단일스레드 골격) | INT-06 | 없음 | Phase 1 Web 시뮬레이터 기본 틀(운전자 명령 경로) 검증 | Phase 1 완료 기준(요구사항 문서 Phase1 정의와 정합) | 1 |
 | INT-08 | SWC-ENG-01 순위1(SWR-007/008, crash) 추가 | INT-05 | 없음(실제 SWC-VAL-01 사용) | 최우선 트리거 및 PENDING 비강제 검증 | ASIL B, SWR-022 최우선 순위 — 위험기반 최우선 통합 | 2 |
 | INT-09 | SWC-OVR-01 실장 + SWC-ENG-01 순위4(SWR-005/006/009) | INT-08 | 없음 | 접근위험 LOCK/억제/override 검증, 순위1과의 상호작용(A3) 검증 | ASIL B, 순위1 다음으로 안전영향이 큰 순위 | 2 |
-| INT-10 | SWC-ENG-01 순위3(SWR-021, sensor_fault) + SWC-STM-01 연계 강화 | INT-08, INT-09 | 없음 | 출력유지 및 순위1 예외 검증(순위2 예외는 Phase3에서 완성, 비고 참조) | ASIL B, 직전 확정 출력 의존성 때문에 StateManager 연계 이후 통합 | 2 |
+| INT-10 | SWC-ENG-01 순위3(SWR-021, sensorFault) + SWC-STM-01 연계 강화 | INT-08, INT-09 | 없음 | 출력유지 및 순위1 예외 검증(순위2 예외는 Phase3에서 완성, 비고 참조) | ASIL B, 직전 확정 출력 의존성 때문에 StateManager 연계 이후 통합 | 2 |
 | INT-11 | SWC-VAL-01 전 범위 강화(gear P/N/D/R, speed 0.0~300.0 등 전 안전입력) | INT-02 | 없음 | SWR-013-A/B 전 범위 검증 | Phase 2 완료 기준 | 2 |
 | INT-12 | SWC-ENG-01 순위2(SWR-017, 화재등) | INT-08 | 없음 | 순위1·2 상호작용, 순위2가 순위3 예외를 완성시킴(INT-10 비고 해소) | QM이지만 순위1 다음으로 강제 RELEASE를 유발 — 순위3 완전성 확보를 위해 조기 통합 | 3 |
 | INT-13 | SWC-ENG-01 순위5(SWR-018, ISOFIX) | INT-09, INT-12 | 없음 | 순위4/5 상호작용(순위4 우선) 검증 | 요구사항 Phase3 정의 순서 | 3 |
@@ -555,7 +556,7 @@ stateDiagram-v2
 | INT-15 | SWC-ENG-01 순위7(SWR-003, 자동잠금) | INT-14 | 없음 | 8단계 전체 완성, SWR-022 전 조합(인접쌍7+비인접 대표쌍) 검증 가능 | 8단계 중 마지막 순위, 전체 정책 완결 지점 | 3 |
 | INT-16 | SWC-REC-01(FIFO 100, SWR-010/011/012) | INT-06 | 없음 | 결정 레코드 스키마·순환보존·휘발성 검증 | 표시/조회(Phase4)의 전제조건 | 4 |
 | INT-17 | SWC-QRY-01(SWR-014) + SWC-ADP-WEB 확장 | INT-11, INT-16 | 없음 | 상태조회 응답 필드 완전성 검증 | Phase4 정의 순서 | 4 |
-| INT-18 | SWC-DSP-01(SWR-015, display_priority TBD 확장점 포함) | INT-17 | 없음 | OEM-IF-006 직렬화, priority_reason=reason_code, HTTP 500 오류계약 검증 | Phase4 정의 순서 | 4 |
+| INT-18 | SWC-DSP-01(SWR-015, displayPriority TBD 확장점 포함) | INT-17 | 없음 | OEM-IF-006 직렬화, priorityReason=reasonCode, HTTP 500 오류계약 검증 | Phase4 정의 순서 | 4 |
 | INT-19 | SWC-ADP-CLK-FIX 기반 SWR-016 결정론 회귀(1,000회 재생) 전체 시스템 | INT-15, INT-18 | 고정 입력벡터 세트 | 결정론 100%(해시 동일) 검증 | 전 컴포넌트가 통합된 이후에만 전체 시스템 결정론을 의미있게 검증 가능 — 최종 순서 | 4 |
 
 **비고(INT-10)**: `SWR-021`의 예외 조건은 순위1(crash)과 순위2(화재등) 둘 다를 포함하므로, Phase2 시점(INT-10)에는 순위1 예외만 완전하고 순위2 예외는 Phase3(INT-12) 완료 후에야 SWR-021 전체 요구사항이 충족된다. 이는 요구사항 문서의 Phase 구분 자체가 SWR-021을 Phase2로, SWR-017을 Phase3로 배정한 데서 오는 의도된 단계적 제약이며, 아키텍처가 임의로 만든 결함이 아니다.
@@ -575,13 +576,13 @@ stateDiagram-v2
 | SWR-007 | SWC-ENG-01(순위1) | IF-EXT-002, IF-INT-012 | |
 | SWR-008 | SWC-ENG-01(순위1, PENDING 처리) | IF-EXT-002 | |
 | SWR-009 | SWC-ENG-01(순위4, 좌우독립), SWC-OVR-01(side별 독립 상태) | IF-EXT-003, IF-INT-010 | |
-| SWR-010 | SWC-REC-01 | IF-INT-014 | 스키마(sequence_id/timestamp/lock_left/lock_right/state/reason_code) |
+| SWR-010 | SWC-REC-01 | IF-INT-014 | 스키마(sequenceId/timestamp/lockLeft/lockRight/state/reasonCode) |
 | SWR-011 | SWC-REC-01 | IF-INT-014 | FIFO 100, `deque(maxlen=100)` |
 | SWR-012 | SWC-REC-01 | — | 프로세스 메모리 한정(§13) |
 | SWR-013-A | SWC-VAL-01 | IF-EXT-001/002/003/007/008/009, IF-INT-008 | |
 | SWR-013-B | SWC-VAL-01(Vehicle측), SWC-VAL-02(IF-004측) | IF-INT-008, IF-INT-009 | IF-004에 대해 SWR-013-B와 SWR-019가 중복 규정 — 아키텍처는 SWC-VAL-02로 단일화(비고 참조) |
 | SWR-014 | SWC-QRY-01 | IF-INT-006 | |
-| SWR-015 | SWC-DSP-01 | IF-EXT-006, IF-INT-007 | display_priority TBD(§9.4) |
+| SWR-015 | SWC-DSP-01 | IF-EXT-006, IF-INT-007 | displayPriority TBD(§9.4) |
 | SWR-016 | SWC-ADP-CLK-FIX, SWC-ORC-01(결정론적 순서), SWC-ENG-01(무상태 순수함수) | IF-INT-004, IF-INT-005 | 아키텍처 전반 원칙(§2.8, §10.1) |
 | SWR-017 | SWC-ENG-01(순위2) | IF-EXT-007, IF-INT-012 | |
 | SWR-018 | SWC-ENG-01(순위5) | IF-EXT-008, IF-INT-012 | |
@@ -599,7 +600,7 @@ stateDiagram-v2
 ## 13. 자원 및 배포 경계
 
 - **실행 노드**: 단일 PC/SIL 프로세스(로컬 실행) — HW/ECU 배포 없음(§1.3).
-- **프로세스/스레드**: 단일 프로세스, 단일 스레드(§2.8). `http.server.HTTPServer.serve_forever()`가 요청을 순차 처리하며, 각 요청 처리 중 필요 시 `SWC-ORC-01.run_cycle()`을 동일 스레드에서 동기 호출한다.
+- **프로세스/스레드**: 단일 프로세스, 단일 스레드(§2.8). `http.server.HTTPServer.serve_forever()`가 요청을 순차 처리하며, 각 요청 처리 중 필요 시 `SWC-ORC-01.runCycle()`을 동일 스레드에서 동기 호출한다.
 - **메모리**: `SWC-REC-01`은 최대 100개 `DecisionRecord`(고정 상한, §2.7). `SWC-STM-01`/`SWC-OVR-01`은 상수 크기 상태(좌/우 각 1개 값). 전체 메모리 사용량은 입력 이력 길이와 무관하게 상한이 고정된다.
 - **CPU/시간 예산**: 1회 평가주기(`RunEvaluationCycle`) 300ms 예산 내 완료(SWR-007 근거), freshness 판정 100ms 이내(SWR-013-A).
 - **저장소**: 영속 저장소 없음(SWR-012, 재기동 시 전량 소실). 디스크 I/O 없음.
@@ -621,7 +622,7 @@ stateDiagram-v2
 | **Phase 1** | SWR-001, 002, 004, 019 (+ 013-A/B 골격) | SWC-ADP-CLK-SYS/FIX, SWC-VAL-01(골격), SWC-VAL-02, SWC-STM-01(초기값), SWC-ENG-01(순위8만), SWC-ORC-01, SWC-ADP-ACT, SWC-ADP-WEB(골격) | IF-INT-001,002,003,004,005,008,009,011,012,013 / IF-EXT-004,005 | INT-01~INT-07 |
 | **Phase 2 (ASIL B)** | SWR-005, 006, 007, 008, 009, 013-A, 013-B, 021 | SWC-VAL-01(전 범위 강화), SWC-OVR-01(신규), SWC-ENG-01(순위1,3,4 추가), SWC-STM-01(연계 강화) | IF-EXT-001,002,003,007,008,009 / IF-INT-008,010,011 | INT-08~INT-11 |
 | **Phase 3 (QM 보조 자동화)** | SWR-003, 017, 018, 020 | SWC-ENG-01(순위2,5,6,7 추가 — 8단계 전체 완성) | IF-EXT-001,007,008,009 / IF-INT-012 | INT-12~INT-15 |
-| **Phase 4 (표시/비기능)** | SWR-010, 011, 012, 014, 015, 016 (+ SWR-013-A/021의 DEGRADED 상호작용 확장점) | SWC-REC-01, SWC-QRY-01, SWC-DSP-01(display_priority 확장점), SWC-ADP-CLK-FIX(결정론 회귀) | IF-INT-006,007,014,015,016 / IF-EXT-006 | INT-16~INT-19 |
+| **Phase 4 (표시/비기능)** | SWR-010, 011, 012, 014, 015, 016 (+ SWR-013-A/021의 DEGRADED 상호작용 확장점) | SWC-REC-01, SWC-QRY-01, SWC-DSP-01(displayPriority 확장점), SWC-ADP-CLK-FIX(결정론 회귀) | IF-INT-006,007,014,015,016 / IF-EXT-006 | INT-16~INT-19 |
 
 이 표는 각 Phase의 상세설계(SWE.3) 범위를 정하는 기준으로 사용될 수 있다(요청사항).
 
@@ -653,7 +654,7 @@ stateDiagram-v2
 
 ### 15.3 입력 데이터 계약 확정 기록
 
-**결정**: `gear` ∈ {P, N, D, R}, `vehicle_speed_kph` ∈ [0.0, 300.0] km/h — OEM 원문에 이미 존재하던 값으로 사용자가 확인·제공(임의 추정 아님). §6.2 IF-EXT-001에 반영 완료. **결정자/일자**: jay.kim3063@gmail.com / 2026-09-18.
+**결정**: `gear` ∈ {P, N, D, R}, `vehicleSpeedKph` ∈ [0.0, 300.0] km/h — OEM 원문에 이미 존재하던 값으로 사용자가 확인·제공(임의 추정 아님). §6.2 IF-EXT-001에 반영 완료. **결정자/일자**: jay.kim3063@gmail.com / 2026-09-18.
 
 ### 15.4 입력 문서 및 적용 표준
 
@@ -703,9 +704,9 @@ stateDiagram-v2
 | 번호 | 항목 | 상태 | 비고 |
 |---|---|---|---|
 | 1 | 동시성 모델(단일 스레드 vs 스레딩) | **해결됨** | 사용자 결정(§2.8, §15.2) — 단일 스레드 확정 |
-| 2 | `gear`/`vehicle_speed_kph` 데이터 계약 | **해결됨** | 사용자 확정 제공(§6.2, §15.3) |
-| 3 | DEGRADED와 SWR-022(FAULT/OFF) 동시발생 시 `state` 표시 우선순위 | **의도적으로 미해결 — Phase 4로 이월** | 사용자 결정에 따라 강제 해소하지 않음. `display_priority` 확장 지점으로 §6.1 IF-INT-007, §9.4에 명시. `lock_left`/`lock_right` 판정에는 영향 없음 |
-| 4 | (신규 식별) 결정 레코드의 단일 `reason_code` 필드와 좌/우 도어가 서로 다른 순위의 사유로 결정되는 경우(예: SWR-020 대안흐름 A2 — 좌측 ISOFIX/우측 ignition-off)의 표기 규칙 | **미해결 — 재확인 권장** | `SWE1-001`의 SWR-010/014/015 스키마가 좌우 공통의 단일 reason_code 필드만 정의하고 있어(§4 SWC-REC-01), 아키텍처는 잠정적으로 "그 평가주기에 적용된 가장 높은 순위(가장 작은 번호)의 사유"를 기록하는 것으로 설계했다(§4 컴포넌트 책임, `DecisionResult`). 이는 SWE1-001 원문에 명시된 근거가 아니라 아키텍처 단계에서 새로 식별한 해석이므로, SWE.3 상세설계 착수 전 사용자 재확인을 권장한다 |
+| 2 | `gear`/`vehicleSpeedKph` 데이터 계약 | **해결됨** | 사용자 확정 제공(§6.2, §15.3) |
+| 3 | DEGRADED와 SWR-022(FAULT/OFF) 동시발생 시 `state` 표시 우선순위 | **의도적으로 미해결 — Phase 4로 이월** | 사용자 결정에 따라 강제 해소하지 않음. `displayPriority` 확장 지점으로 §6.1 IF-INT-007, §9.4에 명시. `lockLeft`/`lockRight` 판정에는 영향 없음 |
+| 4 | (신규 식별) 결정 레코드의 단일 `reasonCode` 필드와 좌/우 도어가 서로 다른 순위의 사유로 결정되는 경우(예: SWR-020 대안흐름 A2 — 좌측 ISOFIX/우측 ignition-off)의 표기 규칙 | **미해결 — 재확인 권장** | `SWE1-001`의 SWR-010/014/015 스키마가 좌우 공통의 단일 reasonCode 필드만 정의하고 있어(§4 SWC-REC-01), 아키텍처는 잠정적으로 "그 평가주기에 적용된 가장 높은 순위(가장 작은 번호)의 사유"를 기록하는 것으로 설계했다(§4 컴포넌트 책임, `DecisionResult`). 이는 SWE1-001 원문에 명시된 근거가 아니라 아키텍처 단계에서 새로 식별한 해석이므로, SWE.3 상세설계 착수 전 사용자 재확인을 권장한다 |
 | 5 | (신규 식별) `WebSimulatorAdapter`가 평가주기를 트리거하는 방식(HTTP 요청마다 1회 vs 별도 `/api/tick` 명시적 호출) | **미해결 — SWE.3에서 확정 예정** | SWE1-001/SWE1-002 어디에도 Web 시뮬레이터의 "평가주기 발생 시점"이 정의되어 있지 않다(요구사항은 추상적 "평가주기"만 규정). 본 문서는 두 방식 모두를 §6.1 IF-INT-005(`RunEvaluationCycle`)로 수용 가능하도록 설계했으나 최종 선택은 SWE.3 상세설계 또는 별도 사용자 확인으로 남긴다 |
 
 이 부록은 §9.4와 함께, "사용자 확인 없이 근거 없는 아키텍처 결정을 확정하지 않는다"는 원칙(작업 지침)의 이행 증거로 유지한다.
