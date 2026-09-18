@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Red-Green-Refactor 기반 TDD 방법론(obra/superpowers의 test-driven-development 스킬을 Python/unittest 환경 및 CLAUDE.md 구현 지침에 맞게 각색). 실패하는 테스트를 먼저 작성하고 최소 구현으로 통과시킨 뒤 리팩토링하며, 테스트 함수에는 Doxygen 형식으로 목적·기법·긍정/부정 케이스를 기록하고, 함수 순수코드라인/순환복잡도/중복코드/주석비율/명명규칙을 오픈소스 도구로 실측 검증한다. 코드 구현/구현 단계 작업을 요청받을 때 사용.
+description: Red-Green-Refactor 기반 TDD 방법론(obra/superpowers의 test-driven-development 스킬을 Python/unittest 환경 및 CLAUDE.md 구현 지침에 맞게 각색). 실패하는 테스트를 먼저 작성하고 최소 구현으로 통과시킨 뒤 리팩토링하며, 테스트 함수에는 Doxygen 형식으로 목적·기법·긍정/부정 케이스를 기록하고, 함수 순수코드라인/순환복잡도/중복코드/주석비율/명명규칙과 Branch 커버리지 100%·테스트 성공률 100%를 오픈소스 도구로 실측 검증한다. 코드 구현/구현 단계 작업을 요청받을 때 사용.
 ---
 
 # TDD 구현 스킬
@@ -10,6 +10,7 @@ description: Red-Green-Refactor 기반 TDD 방법론(obra/superpowers의 test-dr
 ## 0. 입력 확인 (최우선)
 
 - 구현 대상의 상세설계 산출물(`detailed-design` 스킬 결과: 함수 계약 — 함수 ID, 시그니처, 사전/사후조건, 오류 계약, 할당 요구사항 ID)을 실제로 확인한다(`Glob`/`Grep`/`Read`). 없으면 추측해서 구현하지 않고 사용자에게 알린다.
+- `Skill` 도구로 `test-design-techniques` 스킬을 함께 로드한다. 테스트 설계 기법(동등분할/경계값분석/결정테이블/상태전이/오류추정 등)의 명칭과 정의는 그 스킬의 공통 카탈로그를 따르며, 이 스킬에서 재정의하지 않는다.
 - Python 3.14 문법을 기준으로, 테스트는 표준 라이브러리 `unittest`만 사용한다.
 
 ## 핵심 원칙 (Iron Law)
@@ -135,6 +136,10 @@ python -m unittest <테스트 모듈 또는 클래스> -v
 | 중복 코드 | ≤ 7줄 | `pylint --enable=duplicate-code --min-similarity-lines=8` |
 | Doxygen 주석 비율 | ≥ 20% | `radon raw`의 `(Comments + Multi) / LOC` |
 | 함수/변수명 | 3글자 이상 + 낙타 표기법 | `references/naming-convention.md` |
+| **Branch 커버리지** | **= 100%** | `coverage run --branch -m unittest discover` + `coverage report -m` |
+| **테스트 성공률** | **= 100%** (스킵/예상 실패 없이 전부 Pass) | `unittest` 실행 결과(Verify GREEN)의 `OK` 여부 |
+
+**Branch 커버리지 100%와 테스트 성공률 100%는 CLAUDE.md 단위 테스트 지침의 필수 게이트다.** 미달 시 그 분기를 실행시키는 테스트 케이스를 추가하고(예: 조건문의 참/거짓 양쪽 모두), 재실행·재측정한다. `coverage report -m`의 `Missing` 열에 나열된 분기/라인이 하나도 없어야 한다.
 
 프로덕션 코드의 Doxygen 주석 형식은 `references/doxygen-comment-style.md`를, 테스트 함수의 Doxygen 주석(목적/기법/케이스)은 `references/test-documentation.md`를 따른다.
 
@@ -186,6 +191,8 @@ python -m unittest <테스트 모듈 또는 클래스> -v
 - [ ] 경계값/오류 케이스가 포함되었는가
 - [ ] 모든 테스트 메서드에 Doxygen `@brief`/`@technique`/`@case`가 작성되었는가(`references/test-documentation.md`)
 - [ ] CLAUDE.md 품질 게이트(NLOC/CCN/중복/주석비율/명명규칙)를 도구로 실측했는가
+- [ ] Branch 커버리지 100%를 `coverage`로 실측했는가(미커버 분기가 없는가)
+- [ ] 전체 테스트 성공률이 100%인가(스킵/예상 실패 없이 모두 Pass)
 - [ ] 함수ID ↔ 요구사항ID ↔ 테스트 추적성 표를 작성했는가(`references/tdd-cycle-and-traceability.md`)
 
 체크박스를 모두 채울 수 없다면 TDD를 건너뛴 것이다 — 처음부터 다시 한다.
@@ -218,9 +225,16 @@ python -m unittest <테스트 모듈 또는 클래스> -v
 
 ## 참고자료 목차
 
+- **`test-design-techniques` 스킬(별도, 공통 카탈로그)** — 테스트 설계 기법 명칭·정의·레벨별 적용 매트릭스. `@technique`에 쓸 기법은 여기서 고른다.
 - `references/writing-good-tests.md` — 테스트가 정직한지 판단하는 규칙(어떤 변경을 잡아내는가, 목을 검증하지 않기, Mutation Check 등)
-- `references/test-documentation.md` — 테스트 함수 Doxygen 문서화 규칙(`@brief`/`@technique`/`@case`)과 테스트 설계 기법 어휘
+- `references/test-documentation.md` — 테스트 함수 Doxygen 문서화 규칙(`@brief`/`@technique`/`@case`)
 - `references/quality-metrics-and-tools.md` — CLAUDE.md 품질 게이트 측정 도구(lizard/radon/pylint)
 - `references/naming-convention.md` — 3글자 이상 + 낙타 표기법
 - `references/doxygen-comment-style.md` — 프로덕션 코드 Doxygen 주석 형식
 - `references/tdd-cycle-and-traceability.md` — 추적성 표 형식
+
+## 경계 (이 스킬이 다루지 않는 것)
+
+- **컴포넌트 간 상호작용 검증은 다루지 않는다.** 함수 계약 하나의 화이트박스 검증까지만 다루며, 인터페이스를 통한 컴포넌트 간 통합 동작 검증은 `integration-testing` 스킬(`integration-tester` 에이전트)의 몫이다.
+- **SW 요구사항 전체에 대한 블랙박스 시스템 시험은 다루지 않는다.** 이는 `sw-system-test` 스킬(`sw-system-tester` 에이전트)의 몫이다.
+- **단위 수준의 구조적 커버리지 게이트는 Branch 커버리지 100%뿐이다.** 컴포넌트 수준 구조적 커버리지(함수 커버리지·Call 커버리지 100%)는 통합시험 레벨(`integration-testing`)의 게이트이며, 이 스킬에서 강제하지 않는다.

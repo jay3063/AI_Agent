@@ -63,3 +63,8 @@ description: ISO 26262와 Automotive SPICE(A-SPICE)를 준수하는 요구사항
 2. 추적성 매트릭스
 3. 일관성 점검 결과
 4. A-SPICE/ISO 26262 자체 점검 결과 (미충족 항목 강조)
+
+## 경계 (이 스킬이 다루지 않는 것)
+
+- **아키텍처/상세설계는 다루지 않는다.** 요구사항을 만족하는 구조(컴포넌트, 인터페이스, 모듈)를 설계하지 않는다 — 그것은 `architecture-design`(`architecture-designer`)과 `detailed-design`(`detailed-designer`)의 몫이다.
+- **테스트 케이스는 작성하지 않는다.** 비기능 요구사항에 "검증방안"(방법/도구/합격기준)을 명시하지만, 실행 가능한 테스트 케이스 자체는 `sw-system-test`(`sw-system-tester`, 요구사항 기반 시스템/자격시험)의 몫이다. 이 스킬이 태깅하는 ISO 25010 품질특성 분류는 `sw-system-test`가 비기능 테스트 케이스를 그룹화할 때 동일하게 재사용한다(재정의하지 않음).
